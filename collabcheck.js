@@ -1,5 +1,4 @@
-// TODO use request here instead
-var Github = require('github-api')
+const request = require('request')
 
 // With username parsed from query, check to see if @RR has read/write access
 // to user's fork of Patchwork. This means they have been added as a collab.
@@ -8,19 +7,21 @@ var Github = require('github-api')
 // checkCollab(username, function(err, collab) { collabStatus(r, e, collab) })
 
 module.exports = function (username, callback) {
-  var github = new Github({
-    auth: 'oauth',
-    token: process.env['REPOROBOT_TOKEN']
-  })
+  const options = {
+    url: `https://api.github.com/repos/${username}/patchwork/collaborators/reporobot/permission`,
+    json: true,
+    headers: { 'User-Agent': 'request',
+               'Authorization': 'token ' + process.env['REPOROBOT_TOKEN'],
+               'Accept': 'application/vnd.github.swamp-thing-preview+json'
+    }
+}
+  const collab = false
 
-  var repo = github.getRepo(username, 'patchwork')
-  var collab = false
-
-  repo.show(function (err, repo) {
+  request(options, function (err, response, body) {
     if (err) return callback(err.error)
 
-    var permissions = repo.permissions
-    if (permissions.push) {
+    const permissions = body.permission
+    if (permissions === 'admin' || permissions === 'write') {
       collab = true
       callback(null, collab)
     } else {

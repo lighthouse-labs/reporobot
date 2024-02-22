@@ -1,9 +1,9 @@
-var hbs = require('handlebars')
-var fs = require('fs')
-var request = require('request')
-var btoa = require('btoa')
+const hbs = require('handlebars')
+const fs = require('fs')
+const request = require('request')
+const btoa = require('btoa')
 
-var clearUser = require('./clearuser.js')
+const clearUser = require('./clearuser.js')
 
 module.exports = function (callback) {
   if (process.env['CONTRIBUTORS']) {
@@ -13,7 +13,7 @@ module.exports = function (callback) {
     })
   } else {
     console.log('Making request for data...')
-    var uri = 'http://reporobot.jlord.us/data'
+    const uri = 'http://reporobot.jlord.us/data'
     request({ url: uri, json: true }, function (err, res, body) {
       if (err) return callback(err, 'Fetching latest data for building page')
       organizeData(JSON.stringify(body))
@@ -21,13 +21,13 @@ module.exports = function (callback) {
   }
 
   function organizeData (data) {
-    var everyone = JSON.parse(data)
-    var archiveCount = 12425
-    var everyoneCount = everyone.length + archiveCount
-    var everyoneCommas = everyoneCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-    var newest = everyone[everyone.length - 1]
-    var topHundred = everyone.reverse().slice(0, 100)
-    var stats = { featured: newest, everyone: topHundred, total: everyoneCommas }
+    const everyone = JSON.parse(data)
+    const archiveCount = 12425
+    const everyoneCount = everyone.length + archiveCount
+    const everyoneCommas = everyoneCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    const newest = everyone[everyone.length - 1]
+    const topHundred = everyone.reverse().slice(0, 100)
+    const stats = { featured: newest, everyone: topHundred, total: everyoneCommas }
     return getTemplate(stats, everyone)
   }
 
@@ -35,22 +35,22 @@ module.exports = function (callback) {
     fs.readFile('template.hbs', function (err, file) {
       if (err) return callback(err, 'Error reading template file.')
       file = file.toString()
-      var template = hbs.compile(file)
-      var HTML = template(stats)
+      const template = hbs.compile(file)
+      const HTML = template(stats)
       return writeRepo(HTML, stats, everyone)
     })
   }
 
   function writeRepo (HTML, stats, everyone) {
-    var username = stats.featured.user
-    var baseURL = 'https://api.github.com/repos/'
+    const username = stats.featured.user
+    const baseURL = 'https://api.github.com/repos/'
 
-    var reqHeaders = {
+    const reqHeaders = {
       'User-Agent': 'request',
       'Authorization': 'token ' + process.env['REPOROBOT_TOKEN']
     }
 
-    var options = {
+    const options = {
       headers: reqHeaders,
       url: baseURL + 'jlord/patchwork/contents/index.html',
       json: true,

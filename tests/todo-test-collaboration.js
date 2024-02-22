@@ -1,7 +1,7 @@
-var request = require('request')
-var tape = require('tape')
+const request = require('request')
+const tape = require('tape')
 
-var emailData = require('./email-payload.json')
+const emailData = require('./email-payload.json')
 
 // send a sample email payload to RR's server to trigger
 // the contribution on test account, goldenrod. Then fetch
@@ -9,7 +9,7 @@ var emailData = require('./email-payload.json')
 
 tape("Test RR collaborates on users' repos", function(t) {
 
-  var options = {
+  const options = {
     url: 'http://reporobot.jlord.us/push',
     json: true,
     body: emailData
@@ -25,8 +25,8 @@ tape("Test RR collaborates on users' repos", function(t) {
   })
 
   function checkForCommit() {
-    var timeframe = new Date(Date.now() - 20000)
-    var options = {
+    const timeframe = new Date(Date.now() - 20000)
+    const options = {
       headers: { 'User-Agent': 'request' },
       url: 'https://api.github.com/repos/goldenrod/patchwork/commits',
       json: true,

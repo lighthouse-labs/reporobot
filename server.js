@@ -1,9 +1,10 @@
-var server = require('./index.js')
-var asciify = require('asciify')
+require('dotenv').config()
+const server = require('./index.js')
+const asciify = require('asciify')
 
-var token = process.env['REPOROBOT_TOKEN']
+const token = process.env['REPOROBOT_TOKEN']
 if (!token) throw new Error('Missing REPOROBOT_TOKEN')
-var contributors = process.env['CONTRIBUTORS']
+const contributors = process.env['CONTRIBUTORS']
 if (!contributors) throw new Error('Missing CONTRIBUTORS')
 
 server().listen(process.env.PORT || 5563)

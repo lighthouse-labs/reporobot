@@ -1,11 +1,11 @@
-var request = require('request')
-var asciify = require('asciify')
+const request = require('request')
+const asciify = require('asciify')
 
-var messages = require('./messages.json')
-var addContributor = require('./contributors.js')
+const messages = require('./messages.json')
+const addContributor = require('./contributors.js')
 
-var baseURL = 'https://api.github.com/repos/jlord/patchwork/'
-var stats = {}
+const baseURL = 'https://api.github.com/repos/jlord/patchwork/'
+const stats = {}
 
 // When a new, open Pull Request comes in via the webhook set on jlord/patchwork
 // the request is queued and one by one sent here to verify the PR is a part of
@@ -18,7 +18,7 @@ var stats = {}
 
 module.exports = function (pullreq, callback) {
   if (pullreq.pull_request) pullreq = pullreq.pull_request
-  var prBranch = pullreq.head.ref.toLowerCase()
+  const prBranch = pullreq.head.ref.toLowerCase()
   stats.user = pullreq.user.login
   stats.prNum = pullreq.number
 
@@ -28,7 +28,7 @@ module.exports = function (pullreq, callback) {
     return writeComment(messages.antipattern_branch, stats.prNum)
   }
 
-  var options = {
+  const options = {
     url: baseURL + 'pulls/' + stats.prNum,
     json: true,
     headers: { 'User-Agent': 'request',
@@ -39,7 +39,7 @@ module.exports = function (pullreq, callback) {
   function getTime (error, response, body) {
     if (error) return callback(error, 'Error in request on PR via number')
     // if a test pr is coming in from @RR
-    var info
+    let info
     if (!error && response.statusCode === 200 && pullreq.user.login === 'reporobot') {
       info = body
       stats.time = info.created_at.toLocaleString()
@@ -60,7 +60,7 @@ module.exports = function (pullreq, callback) {
   request(options, getTime)
 
   function getFile (prNum) {
-    var options = {
+    const options = {
       url: baseURL + 'pulls/' + prNum + '/files',
       json: true,
       headers: {
@@ -78,7 +78,7 @@ module.exports = function (pullreq, callback) {
           return writeComment(messages.multi_files, stats.prNum)
         }
 
-        var prInfo = body[0]
+        const prInfo = body[0]
         // TODO do empty files not have a patch property?
         if (prInfo === undefined || !prInfo.patch) {
           console.log(new Date(), 'PR ', stats.prNum, 'FILE IS EMPTY ', stats.user)
@@ -93,7 +93,7 @@ module.exports = function (pullreq, callback) {
   }
 
   function verifyFilename (prInfo) {
-    var filename = prInfo.filename.toLowerCase()
+    const filename = prInfo.filename.toLowerCase()
     if (filename.match('contributors/add-' + stats.user.toLowerCase())) {
       console.log(new Date(), 'PR ', stats.prNum, 'Filename: MATCH ', stats.user)
       return verifyContent(prInfo)
@@ -104,8 +104,8 @@ module.exports = function (pullreq, callback) {
 
   function verifyContent (prInfo) {
     // pull out the actual pr content
-    var patchArray = prInfo.patch.split('@@')
-    var patch = patchArray.pop()
+    const patchArray = prInfo.patch.split('@@')
+    const patch = patchArray.pop()
     // generate the expected content
     asciify(stats.user, { font: 'isometric2' }, function (err, res) {
       if (err) return callback(err, 'Error generating ascii art to test against')
@@ -122,7 +122,7 @@ module.exports = function (pullreq, callback) {
   function writeComment (message, prNum) {
     stats.user = stats.user || 'a skipped PR'
     console.log(new Date(), 'PR ' + prNum + ' Uh oh, writing comment for ' + stats.user)
-    var options = {
+    const options = {
       url: baseURL + 'issues/' + prNum + '/comments',
       headers: {
         'User-Agent': 'request',
@@ -138,14 +138,14 @@ module.exports = function (pullreq, callback) {
   }
 
   function mergePR (prNum) {
-    var tries = 0
-    var limit = 25
+    const tries = 0
+    const limit = 25
 
     tryMerge()
 
     function tryMerge () {
-      var message = 'Merging PR from @' + stats.user
-      var options = {
+      const message = 'Merging PR from @' + stats.user
+      const options = {
         url: baseURL + 'pulls/' + prNum + '/merge',
         headers: {
           'User-Agent': 'request',

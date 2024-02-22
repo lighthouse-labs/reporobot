@@ -1,24 +1,24 @@
-var rebuildpage = require('./buildpage.js')
-var messages = require('../messages.json')
-var debug = require('debug')('TEST')
-var Github = require('github-api')
-var request = require('request')
-var tape = require('tape')
+// const rebuildpage = require('./buildpage.js')
+// const messages = require('../messages.json')
+const debug = require('debug')('TEST')
+const Github = require('github-api')
+const request = require('request')
+const tape = require('tape')
 
-var github = new Github({
+const github = new Github({
   auth: 'oauth',
   token: process.env['REPOROBOT_TOKEN']
 })
 
-var reqHeaders = {
+const reqHeaders = {
   'User-Agent': 'request',
   'Authorization': 'token ' + process.env['REPOROBOT_TOKEN']
 }
 
-var fork = github.getRepo('reporobot', 'patchwork')
-var upstream = github.getRepo('jlord', 'patchwork')
-var baseURL = 'https://api.github.com/repos/'
-var prnum
+const fork = github.getRepo('reporobot', 'patchwork')
+const upstream = github.getRepo('jlord', 'patchwork')
+const baseURL = 'https://api.github.com/repos/'
+const prnum
 
 // Create a branch on RR's fork of Patchwork. Then create a file on that
 // branch so that you can create a PR. Check to see if RR commented on that PR.
@@ -40,7 +40,7 @@ tape("Test a correct PR", function(t) {
   }
 
   function createDiff() {
-    var options = {
+    const options = {
       headers: reqHeaders,
       url: baseURL + "reporobot/patchwork/contents/contributors/add-reporobot.txt",
       json: true,
@@ -69,7 +69,7 @@ tape("Test a correct PR", function(t) {
 
   function makePR() {
     debug("⬢ Creating PR")
-    var pull = {
+    const pull = {
       title: "[TESTING] Correct PR",
       body: "Running a test on a correct PR",
       base: "gh-pages",
@@ -89,8 +89,8 @@ tape("Test a correct PR", function(t) {
 
   function fetchPR() {
     debug("⬢ Fetching PR")
-    var prURL = baseURL + 'jlord/patchwork/issues/' + prnum
-    var options = { headers: reqHeaders, json: true, url: prURL }
+    const prURL = baseURL + 'jlord/patchwork/issues/' + prnum
+    const options = { headers: reqHeaders, json: true, url: prURL }
 
     request(options, function(err, res, body) {
       if (err) {

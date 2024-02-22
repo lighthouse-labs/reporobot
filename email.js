@@ -1,8 +1,8 @@
-var asciify = require('asciify')
-var btoa = require('btoa')
-var request = require('request')
+const asciify = require('asciify')
+const btoa = require('btoa')
+const request = require('request')
 
-var acceptInvites = require('./accept-invites.js')
+const acceptInvites = require('./accept-invites.js')
 
 module.exports = function (object, callback) {
   // if it's not an email, return
@@ -10,8 +10,8 @@ module.exports = function (object, callback) {
   getDetails(object)
 
   function getDetails (object) {
-    var baseURL = 'https://api.github.com/repos/'
-    var subject = object.headers.Subject
+    const baseURL = 'https://api.github.com/repos/'
+    const subject = object.headers.Subject
     console.log(new Date(), 'Received email:', subject)
 
     if (!subject.match('invited you to')) {
@@ -19,8 +19,8 @@ module.exports = function (object, callback) {
       return
     }
 
-    var detailsArray = subject.split(' invited you to ')
-    var details = { 'username': detailsArray[0],
+    const detailsArray = subject.split(' invited you to ')
+    const details = { 'username': detailsArray[0],
                     'repo': detailsArray[1] }
     details.fileURI = baseURL + details.repo + '/contents/contributors/' +
                     'add-' + details.username + '.txt'
@@ -44,12 +44,12 @@ module.exports = function (object, callback) {
   }
 
   function writeRepo (artwork, details) {
-    var reqHeaders = {
+    const reqHeaders = {
       'User-Agent': 'request',
       'Authorization': 'token ' + process.env['REPOROBOT_TOKEN']
     }
 
-    var options = {
+    const options = {
       headers: reqHeaders,
       url: details.fileURI + details.forSHA,
       json: true,

@@ -1,17 +1,17 @@
-var http = require('http')
-var fs = require('fs')
-var url = require('url')
+const http = require('http')
+const fs = require('fs')
+const url = require('url')
 
-var async = require('async')
-var concat = require('concat-stream')
+const async = require('async')
+const concat = require('concat-stream')
 
-var checkPR = require('./prcheck.js')
-var checkCollab = require('./collabcheck.js')
-var checkEmail = require('./email.js')
-var mergePR = require('./merge.js')
+const checkPR = require('./prcheck.js')
+const checkCollab = require('./collabcheck.js')
+const checkEmail = require('./email.js')
+const mergePR = require('./merge.js')
 
 // q to slow it down enough for the GitHub API
-var q = async.queue(function que (pullreq, callback) {
+const q = async.queue(function que (pullreq, callback) {
   console.log(new Date(), 'QUEUE', pullreq.number)
   mergePR(pullreq, function donePR (err, message) {
     if (err) return callback(err, message)
@@ -24,7 +24,7 @@ console.log('QUEUE LENGTH', q.length())
 q.drain = function drain () { console.log('Queue drain') }
 
 module.exports = function () {
-  var server = http.createServer(router)
+  const server = http.createServer(router)
 
   // router routes the requests to RR
   // to the appropriate places
@@ -59,8 +59,8 @@ module.exports = function () {
 
     // When Git-it verifies user made a PR
     // Comes from verify step in Git-it challenge #10
-    var queryURL
-    var username
+    let queryURL
+    let username
     if (req.url.match('/pr')) {
       queryURL = url.parse(req.url, true)
       username = queryURL.query.username
@@ -82,14 +82,14 @@ module.exports = function () {
   function handleEmail (req, res) {
     req.pipe(concat(function (buff) {
       try {
-        var emailObj = JSON.parse(buff)
+        const emailObj = JSON.parse(buff)
+        checkEmail(emailObj, function checkedEmail (err, message) {
+          if (err) console.log(new Date(), message, err)
+        })
       } catch (e) {
         return console.log(new Date(), 'Error parsing email JSON', req.headers, buff.length, [buff.toString()])
       }
 
-      checkEmail(emailObj, function checkedEmail (err, message) {
-        if (err) console.log(new Date(), message, err)
-      })
     }))
 
     // TODO Why is this needed, and otherwise
@@ -103,22 +103,22 @@ module.exports = function () {
   function handlePR (req, res) {
     req.pipe(concat(function (buff) {
       try {
-        var pullreq = JSON.parse(buff)
+        const pullreq = JSON.parse(buff)
+        // TODO do this check elsewhere, this should just be routing
+        // Check if it's a closed PR
+        if (pullreq.action && pullreq.action === 'closed') {
+          console.log(new Date(), 'SKIPPING: Closed pull request')
+        } else {
+          // Send open PR to the queue
+          q.push(pullreq, function (err, message) {
+            if (err) return console.log(new Date(), message, err)
+            console.log(new Date(), pullreq.number, 'Finished PR')
+          })
+        }
       } catch (e) {
         return console.log(new Date(), 'Error parsing PR JSON', req.headers, buff.length, [buff.toString()])
       }
 
-      // TODO do this check elsewhere, this should just be routing
-      // Check if it's a closed PR
-      if (pullreq.action && pullreq.action === 'closed') {
-        console.log(new Date(), 'SKIPPING: Closed pull request')
-      } else {
-        // Send open PR to the queue
-        q.push(pullreq, function (err, message) {
-          if (err) return console.log(new Date(), message, err)
-          console.log(new Date(), pullreq.number, 'Finished PR')
-        })
-      }
 
       res.statusCode = 200
       res.setHeader('content-type', 'application/json')

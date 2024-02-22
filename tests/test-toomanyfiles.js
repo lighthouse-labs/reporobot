@@ -1,23 +1,23 @@
-var messages = require('../messages.json')
-var debug = require('debug')('TEST')
-var Github = require('github-api')
-var request = require('request')
-var tape = require('tape')
+const messages = require('../messages.json')
+const debug = require('debug')('TEST')
+const Github = require('github-api')
+const request = require('request')
+const tape = require('tape')
 
-var github = new Github({
+const github = new Github({
   auth: 'oauth',
   token: process.env['REPOROBOT_TOKEN']
 })
 
-var reqHeaders = {
+const reqHeaders = {
   'User-Agent': 'request',
   'Authorization': 'token ' + process.env['REPOROBOT_TOKEN']
 }
 
-var fork = github.getRepo('reporobot', 'patchwork')
-var upstream = github.getRepo('jlord', 'patchwork')
-var baseURL = 'https://api.github.com/repos/'
-var prnum
+const fork = github.getRepo('reporobot', 'patchwork')
+const upstream = github.getRepo('jlord', 'patchwork')
+const baseURL = 'https://api.github.com/repos/'
+const prnum
 
 // Create a branch on RR's fork of Patchwork. Then create a file on that
 // branch, then another! Then create a PR. Check to see if RR
@@ -39,7 +39,7 @@ tape("Test too many files", function(t) {
   }
 
   function createFirstFile() {
-    var options = {
+    const options = {
       headers: reqHeaders,
       url: baseURL + "reporobot/patchwork/contents/file_one.md",
       json: true,
@@ -67,7 +67,7 @@ tape("Test too many files", function(t) {
   }
 
   function createSecondFile() {
-    var options = {
+    const options = {
       headers: reqHeaders,
       url: baseURL + "reporobot/patchwork/contents/file_two.md",
       json: true,
@@ -96,7 +96,7 @@ tape("Test too many files", function(t) {
 
   function makePR() {
     debug("⬢ Creating PR")
-    var pull = {
+    const pull = {
       title: "[TESTING] Too many files",
       body: "Running a test on a PR with a too many files",
       base: "gh-pages",
@@ -116,8 +116,8 @@ tape("Test too many files", function(t) {
 
   function fetchPR() {
     debug("⬢ Fetching PR")
-    var prURL = baseURL + 'jlord/patchwork/issues/' + prnum + '/comments'
-    var options = { headers: reqHeaders, json: true, url: prURL }
+    const prURL = baseURL + 'jlord/patchwork/issues/' + prnum + '/comments'
+    const options = { headers: reqHeaders, json: true, url: prURL }
 
     request(options, function(err, res, body) {
       if (err) {
@@ -138,7 +138,7 @@ tape("Test too many files", function(t) {
       t.fail("Less than one comment")
       return t.end()
     }
-    var lastComment = body[body.length - 1]
+    const lastComment = body[body.length - 1]
     t.equal(lastComment.user.login, "reporobot")
     t.equal(lastComment.body, messages.multi_files)
     t.end()

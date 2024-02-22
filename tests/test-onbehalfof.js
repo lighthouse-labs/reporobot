@@ -1,10 +1,10 @@
-var Github = require('github-api')
-var asciify = require('asciify')
-var request = require('request')
+const Github = require('github-api')
+const asciify = require('asciify')
+const request = require('request')
 
 module.exports = function(sourceAccount, viaAccount, n) {
 
-  var github = new Github({
+  const github = new Github({
       auth: "oauth",
       token: process.env['REPOROBOT_TOKEN']
   })
@@ -14,12 +14,12 @@ module.exports = function(sourceAccount, viaAccount, n) {
   checkViaBranches()
 
   function checkViaBranches() {
-    var repo = github.getRepo(viaAccount, 'patchwork')
+    const repo = github.getRepo(viaAccount, 'patchwork')
 
     // does branch exist?
     repo.listBranches(function(err, branches) {
       if (err) return console.log(err, "error reading branches from " + viaAccount)
-      var branchname = "add-" + viaAccount
+      const branchname = "add-" + viaAccount
       // branches.forEach(function(branch, i) {
       //   console.log(branches.length, i)
       //   console.log(branch, branchname)
@@ -30,7 +30,7 @@ module.exports = function(sourceAccount, viaAccount, n) {
       // })
       // console.log("Branch not there.")
       // cleanOriginal()
-      for (var i = 0; i < branches.length; i++) {
+      for (const i = 0; i < branches.length; i++) {
         if (branches[i].match(branchname)) {
           console.log(n, 1 , "Branch exists on " + viaAccount + " deleting...")
           return deleteViaBranch()
@@ -55,20 +55,20 @@ module.exports = function(sourceAccount, viaAccount, n) {
   // STEP TWO
   // Find and delete merged-in contributors/add-username.txt from sourceAccount
   function cleanOriginal() {
-    var origRepo = github.getRepo(sourceAccount, 'patchwork')
+    const origRepo = github.getRepo(sourceAccount, 'patchwork')
 
-    var headers = {"user-agent": "reporobot", "auth": "oauth"}
+    const headers = {"user-agent": "reporobot", "auth": "oauth"}
     headers["token"] = 'token ' + process.env['REPOROBOT_TOKEN']
-    var url = 'https://api.github.com/repos/jlord/patchwork/contents/contributors?ref=gh-pages'
+    const url = 'https://api.github.com/repos/jlord/patchwork/contents/contributors?ref=gh-pages'
 
     // make sure file doesn't already exist, if it does, delete it
     // using request because for some reason github-ap isn't working
     request(url, {json: true, headers: headers}, function matchFile(error, response, body) {
       if (error) return console.log(error, "Error getting branch contents")
-      var files = body
-      var filename = 'add-' + viaAccount + '.txt'
+      const files = body
+      const filename = 'add-' + viaAccount + '.txt'
 
-      for (var i = 0; i < files.length; i++) {
+      for (const i = 0; i < files.length; i++) {
         if (files[i].name.match(filename)) {
           console.log(n, 2 , "File contributors/add-" + viaAccount + " exists on " + sourceAccount + " deleting...")
           return deleteFile()
@@ -105,7 +105,7 @@ module.exports = function(sourceAccount, viaAccount, n) {
   // function checkBranch() {
   //   repo.listBranches(function(err, branches) {
   //     if (err) return console.log(err, "error reading branches")
-  //     for (var i = 0; i < branches.length; i++) {
+  //     for (const i = 0; i < branches.length; i++) {
   //       if (branches[i].match("add-" + viaAccount)) return deleteBranch()
   //     }
   //     createViaBranch()
@@ -125,7 +125,7 @@ module.exports = function(sourceAccount, viaAccount, n) {
   // Re-create branch add-username on viaAccount
   // Get new repo object
   function createViaBranch() {
-    var repo = github.getRepo(viaAccount, 'patchwork')
+    const repo = github.getRepo(viaAccount, 'patchwork')
 
     repo.branch('gh-pages', 'add-' + viaAccount, function(err) {
       if (err) return console.log(err, "error creating branch on via")
@@ -138,9 +138,9 @@ module.exports = function(sourceAccount, viaAccount, n) {
   // function createViaBranch() {
   //   // getting the sha
   //   console.log("Repo", viaAccount, "/patchwork")
-  //   var headers = {"user-agent": "reporobot", "auth": "oauth"}
+  //   const headers = {"user-agent": "reporobot", "auth": "oauth"}
   //   headers["token"] = 'token ' + process.env['REPOROBOT_TOKEN']
-  //   var url = 'https://api.github.com/repos/' + viaAccount + '/patchwork/git/refs/heads/gh-pages'
+  //   const url = 'https://api.github.com/repos/' + viaAccount + '/patchwork/git/refs/heads/gh-pages'
   //   console.log(url)
   //   request(url, {json: true, headers: headers}, function(error, response, body) {
   //     if (error) return console.log(error, "Error getting sha")
@@ -152,13 +152,13 @@ module.exports = function(sourceAccount, viaAccount, n) {
   // }
   // function createViaBranchActually(sha) {
   //   console.log("CreateViaBranchActually running")
-  //   var url = 'https://api.github.com/repos/' + viaAccount + '/patchwork/git/refs'
-  //   var headers = {
+  //   const url = 'https://api.github.com/repos/' + viaAccount + '/patchwork/git/refs'
+  //   const headers = {
   //     "user-agent": "reporobot",
   //     "auth": "oauth",
   //     "token": 'token ' + process.env['REPOROBOT_TOKEN']
   //   }
-  //   var ref = "refs/heads/add-" + viaAccount
+  //   const ref = "refs/heads/add-" + viaAccount
   //   console.log([headers, ref, url, sha])
   //
   //   request.put({
@@ -187,7 +187,7 @@ module.exports = function(sourceAccount, viaAccount, n) {
   // STEP FIVE
   // Write ascii art to contributors/add-username.txt on add-username branch
   function writeFile(art) {
-    var repo = github.getRepo(viaAccount, 'patchwork')
+    const repo = github.getRepo(viaAccount, 'patchwork')
 
     repo.write('add-' + viaAccount, 'contributors/add-' + viaAccount + '.txt', art, 'TEST add-' + viaAccount, function(err) {
       if (err) return console.log(err, "error writing file")
@@ -199,14 +199,14 @@ module.exports = function(sourceAccount, viaAccount, n) {
   // STEP SIXE
   // Create pull request on jlord/patchwork on behalf of viaAccount
   function createPR() {
-    var pull = {
+    const pull = {
       title: "TEST add " + viaAccount,
       body: "Testing multiple PRs, this one " + viaAccount,
       base: "gh-pages",
       head: viaAccount + ":" + "add-" + viaAccount
     }
 
-    var pullReqRepo = github.getRepo(sourceAccount, 'patchwork')
+    const pullReqRepo = github.getRepo(sourceAccount, 'patchwork')
 
     pullReqRepo.createPullRequest(pull, function(err, pullRequest) {
       if (err) return console.log(err, "error creating PR")

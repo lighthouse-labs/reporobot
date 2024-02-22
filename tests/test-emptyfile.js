@@ -1,23 +1,23 @@
-var messages = require('../messages.json')
-var debug = require('debug')('TEST')
-var Github = require('github-api')
-var request = require('request')
-var tape = require('tape')
+const messages = require('../messages.json')
+const debug = require('debug')('TEST')
+const Github = require('github-api')
+const request = require('request')
+const tape = require('tape')
 
-var github = new Github({
+const github = new Github({
   auth: 'oauth',
   token: process.env['REPOROBOT_TOKEN']
 })
 
-var reqHeaders = {
+const reqHeaders = {
   'User-Agent': 'request',
   'Authorization': 'token ' + process.env['REPOROBOT_TOKEN']
 }
 
-var fork = github.getRepo('reporobot', 'patchwork')
-var upstream = github.getRepo('jlord', 'patchwork')
-var baseURL = 'https://api.github.com/repos/'
-var prnum
+const fork = github.getRepo('reporobot', 'patchwork')
+const upstream = github.getRepo('jlord', 'patchwork')
+const baseURL = 'https://api.github.com/repos/'
+const prnum
 
 // Create a branch on RR's fork of Patchwork. Then create a file on that
 // branch so that you can create a PR. Check to see if RR commented on that PR.
@@ -39,7 +39,7 @@ tape("Test PR with empty file", function(t) {
   }
 
   function createDiff() {
-    var options = {
+    const options = {
       headers: reqHeaders,
       url: baseURL + "reporobot/patchwork/contents/test.md",
       json: true,
@@ -68,7 +68,7 @@ tape("Test PR with empty file", function(t) {
 
   function makePR() {
     debug("⬢ Creating PR")
-    var pull = {
+    const pull = {
       title: "[TESTING] Empty file",
       body: "Running a test on a PR with an empty file",
       base: "gh-pages",
@@ -89,8 +89,8 @@ tape("Test PR with empty file", function(t) {
 
   function fetchPR() {
     debug("⬢ Fetching PR")
-    var prURL = baseURL + 'jlord/patchwork/issues/' + prnum + '/comments'
-    var options = { headers: reqHeaders, json: true, url: prURL }
+    const prURL = baseURL + 'jlord/patchwork/issues/' + prnum + '/comments'
+    const options = { headers: reqHeaders, json: true, url: prURL }
 
     request(options, function(err, res, body) {
       if (err) {
@@ -111,7 +111,7 @@ tape("Test PR with empty file", function(t) {
       t.fail("Less than one comment")
       return t.end()
     }
-    var lastComment = body[body.length - 1]
+    const lastComment = body[body.length - 1]
     t.equal(lastComment.user.login, "reporobot")
     t.equal(lastComment.body, messages.empty_file)
     t.end()

@@ -1,9 +1,9 @@
-var request = require('request')
+const request = require('request')
 
 // When a new invite email is recieved this is
 // called and all of the pending invites are accepted
 module.exports = function acceptInvites (callback) {
-  var options = {
+  const options = {
       url: 'https://api.github.com/user/repository_invitations',
       json: true,
       headers: { 'User-Agent': 'request',
@@ -13,7 +13,7 @@ module.exports = function acceptInvites (callback) {
   }
 
   acceptBatch()
-  var isDone = false
+  const isDone = false
 
   function thunk (err) {
     if (isDone) return
@@ -23,7 +23,7 @@ module.exports = function acceptInvites (callback) {
 
   function acceptBatch () {
     request(options, function gotInvites (err, response, body) {
-      var acceptedCount = 0
+      const acceptedCount = 0
 
       if (err) return thunk(err)
       if (response.statusCode !== 200) {
@@ -31,12 +31,12 @@ module.exports = function acceptInvites (callback) {
 	return thunk(new Error('Not a 200 response'))
       }
       // Return if there are no pending invites
-      var inviteCount = body.length
+      const inviteCount = body.length
       if (inviteCount === 0) return thunk()
       console.log(new Date(), 'Accepting', body.length, 'invites')
       body.forEach(function getID (invite) {
-        var username = invite.inviter.login
-        var inviteID = invite.id
+        const username = invite.inviter.login
+        const inviteID = invite.id
         // Accept each invite
         options.url = 'https://api.github.com/user/repository_invitations/' + inviteID
         request.patch(options, function accepted (err, response, body) {

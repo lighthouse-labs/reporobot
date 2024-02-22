@@ -2,16 +2,16 @@
 // they added because turns out lots of people are doing this and the repo
 // gets bulky quickly. This file is called from buildpage.js
 
-var request = require('request')
+const request = require('request')
 
-var baseURL = 'https://api.github.com/repos/jlord/patchwork/contents/contributors'
-var headers = {
+const baseURL = 'https://api.github.com/repos/jlord/patchwork/contents/contributors'
+const headers = {
   'User-Agent': 'request',
   'Authorization': 'token ' + process.env['REPOROBOT_TOKEN']
 }
 
 module.exports = function deleteFile (username, callback) {
-  var options = {
+  const options = {
     url: baseURL,
     json: true,
     headers: headers
@@ -23,7 +23,7 @@ module.exports = function deleteFile (username, callback) {
     loop()
     function loop () {
       if (!body.length) return callback(null)
-      var file = body.shift()
+      const file = body.shift()
       if (file.path.match('add-jlord.txt')) return loop()
       deleteFile(file, function (err) {
         if (err) return callback(err, 'Error deleting file')
@@ -33,7 +33,7 @@ module.exports = function deleteFile (username, callback) {
   })
 
   function deleteFile (file, callback) {
-    var options = {
+    const options = {
       url: baseURL + '/' + file.name,
       json: true,
       headers: headers,

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-var pr = require(__dirname + '/test-onbehalfof.js')
-var runParallel = require('run-parallel')
+const pr = require(__dirname + '/test-onbehalfof.js')
+const runParallel = require('run-parallel')
 
-// var accounts = ['jllord', 'goldenrod', 'eviljlord', 'maxogden', 'reporobot']
-var accounts = ['jllord', 'eviljlord', 'goldenrod']
-var sourceAccount = 'jlord'
-var n = 0
+// const accounts = ['jllord', 'goldenrod', 'eviljlord', 'maxogden', 'reporobot']
+const accounts = ['jllord', 'eviljlord', 'goldenrod']
+const sourceAccount = 'jlord'
+const n = 0
 accounts.forEach(function(account) {
   n++
   console.log(n, 0, "Running for " + account)
