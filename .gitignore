@@ -1,3 +1,4 @@
 node_modules
 bu-template.hbs
 .DS_Store
+.env
