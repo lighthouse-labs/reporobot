@@ -7,7 +7,7 @@ const request = require('request')
 
 module.exports = function (username, callback) {
   const options = {
-    url: 'https://api.github.com/repos/jlord/patchwork/issues?state=all&creator=' + username,
+    url: 'https://api.github.com/repos/lhl-reporobot/patchwork/issues?state=all&creator=' + username,
     json: true,
     headers: {
       'User-Agent': 'request',
@@ -20,11 +20,11 @@ module.exports = function (username, callback) {
   function getIssues (error, response, body) {
     if (error) return callback(error, null)
     const issues = body
-    const pr = false
+    let pr = false
     // No issues/PRs from this user
     if (issues.length === 0) return callback(null, pr)
 
-    for (const i = 0; i < issues.length; i++) {
+    for (let i = 0; i < issues.length; i++) {
       const issue = issues[i]
       if (issue.pull_request) pr = true
     }

@@ -8,14 +8,14 @@ const request = require('request')
 
 module.exports = function (username, callback) {
   const options = {
-    url: `https://api.github.com/repos/${username}/patchwork/collaborators/reporobot/permission`,
+    url: `https://api.github.com/repos/${username}/patchwork/collaborators/lhl-reporobot/permission`,
     json: true,
     headers: { 'User-Agent': 'request',
                'Authorization': 'token ' + process.env['REPOROBOT_TOKEN'],
                'Accept': 'application/vnd.github.swamp-thing-preview+json'
     }
 }
-  const collab = false
+  let collab = false
 
   request(options, function (err, response, body) {
     if (err) return callback(err.error)

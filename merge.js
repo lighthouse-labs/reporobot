@@ -4,7 +4,7 @@ const asciify = require('asciify')
 const messages = require('./messages.json')
 const addContributor = require('./contributors.js')
 
-const baseURL = 'https://api.github.com/repos/jlord/patchwork/'
+const baseURL = 'https://api.github.com/repos/lhl-reporobot/patchwork/'
 const stats = {}
 
 // When a new, open Pull Request comes in via the webhook set on jlord/patchwork

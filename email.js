@@ -57,7 +57,7 @@ module.exports = function (object, callback) {
         'branch': 'add-' + details.username,
         'committer': {
           'name': 'reporobot',
-          'email': '60ebe73fdad8ee59d45c@cloudmailin.net' },
+          'email': '06cbd53a404d948263e9@cloudmailin.net' },
         'sha': '',
         'content': btoa(artwork),
         'message': 'drew a picture :art:' }}

@@ -31,6 +31,8 @@ module.exports = function () {
   function router (req, res) {
     console.log('(ノ・∀・)ノ')
     console.log(new Date(), req.method, req.url)
+    let queryURL
+    let username
 
     // End point to latest data
     if (req.url === ('/data')) { return sendData(res) }
@@ -59,8 +61,7 @@ module.exports = function () {
 
     // When Git-it verifies user made a PR
     // Comes from verify step in Git-it challenge #10
-    let queryURL
-    let username
+    
     if (req.url.match('/pr')) {
       queryURL = url.parse(req.url, true)
       username = queryURL.query.username

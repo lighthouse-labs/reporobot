@@ -13,7 +13,7 @@ module.exports = function (callback) {
     })
   } else {
     console.log('Making request for data...')
-    const uri = 'http://reporobot.jlord.us/data'
+    const uri = 'https://da3e-23-16-39-44.ngrok-free.app/data'
     request({ url: uri, json: true }, function (err, res, body) {
       if (err) return callback(err, 'Fetching latest data for building page')
       organizeData(JSON.stringify(body))
@@ -52,13 +52,13 @@ module.exports = function (callback) {
 
     const options = {
       headers: reqHeaders,
-      url: baseURL + 'jlord/patchwork/contents/index.html',
+      url: baseURL + 'lhl-reporobot/patchwork/contents/index.html',
       json: true,
       body: {
         'branch': 'gh-pages',
         'committer': {
           'name': 'reporobot',
-          'email': '60ebe73fdad8ee59d45c@cloudmailin.net'
+          'email': '06cbd53a404d948263e9@cloudmailin.net'
         },
         'sha': '',
         'content': btoa(HTML),

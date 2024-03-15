@@ -4,7 +4,7 @@
 
 const request = require('request')
 
-const baseURL = 'https://api.github.com/repos/jlord/patchwork/contents/contributors'
+const baseURL = 'https://api.github.com/repos/lhl-reporobot/patchwork/contents/contributors'
 const headers = {
   'User-Agent': 'request',
   'Authorization': 'token ' + process.env['REPOROBOT_TOKEN']
@@ -41,7 +41,7 @@ module.exports = function deleteFile (username, callback) {
         'message': 'Clearing directory',
         'committer': {
           'name': 'reporobot',
-          'email': '60ebe73fdad8ee59d45c@cloudmailin.net'
+          'email': '06cbd53a404d948263e9@cloudmailin.net'
         },
         'sha': file.sha,
         'path': file.path
