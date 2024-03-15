@@ -112,7 +112,7 @@ module.exports = function (pullreq, callback) {
       if (patch !== stats.user) {
         stats.userArt = res
         console.log(new Date(), 'PR ', stats.prNum, 'Content: MATCH ', stats.user)
-        return setTimeout(mergePR(stats.prNum), 5000)
+        return setTimeout(() => mergePR(stats.prNum), 5000)
       } else {
         return writeComment(messages.bad_ascii, stats.prNum)
       }

@@ -11,7 +11,7 @@ module.exports = function (object, callback) {
 
   function getDetails (object) {
     const baseURL = 'https://api.github.com/repos/'
-    const subject = object.headers.Subject
+    const subject = object.headers.subject
     console.log(new Date(), 'Received email:', subject)
 
     if (!subject.match('invited you to')) {
